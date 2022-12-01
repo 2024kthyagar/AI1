@@ -6,20 +6,9 @@ import time
 
 def check_complete(assignment, csp_table):
     return "." not in assignment
-    # for i in range(len(assignment)):
-    #     if assignment[i] == ".":
-    #         return False
-    #     for j in csp_table[i]:
-    #         if assignment[i] == assignment[j]:
-    #             return False
-    # return True
 
 
 def select_unassigned_var(assignment, variables, csp_table):  # Minimum Remaining Value
-    # for i in range(len(assignment)):
-    #     if assignment[i] == ".":
-    #         return i
-    # return None
     index, min_value = None, 10
     for i in range(81):
         if assignment[i] == ".":
@@ -40,8 +29,6 @@ def isValid(value, var_index, assignment, csp_table):
 
 def ordered_domain(var_index, assignment, variables, csp_table):
     order = sorted(variables[var_index], reverse=False, key=lambda x: assignment.count(x))
-    # print(variables[var_index])
-    # print(order)
     return order
 
 
@@ -142,8 +129,6 @@ def backtracking_search(puzzle, variables, csp_table):
 
 
 def recursive_backtracking(assignment, variables, csp_table):
-    # assignment = initial_assignment(assignment, variables, csp_table)
-    # assignment = count_appearances(assignment, variables, csp_table)[1]
     if check_complete(assignment, csp_table):
         return assignment
     square, domain = select_unassigned_var(assignment, variables, csp_table)
@@ -155,7 +140,6 @@ def recursive_backtracking(assignment, variables, csp_table):
             return assignment
         square, domain = select_unassigned_var(assignment, variables, csp_table)
     for val in domain:
-        # if isValid(val, square, assignment, csp_table):
         assignment = assignment[:square] + val + assignment[square + 1:]
         tempvars = {k: v.copy() for k, v in variables.items()}
         update_variables(val, square, assignment, tempvars, csp_table)
@@ -163,7 +147,6 @@ def recursive_backtracking(assignment, variables, csp_table):
         if result is not None:
             return result
         assignment = assignment[:square] + "." + assignment[square + 1:]
-            # add_variables(val, square, assignment, variables, csp_table)
     return None
 
 
@@ -230,44 +213,6 @@ def main():
         if solution is None: print("No solution found."); break
         print("{}{} {}".format(" " * (len(str(line)) + 2), solution, checksum(solution)))
     print(time.time() - initial_time)
-
-    # puzzle = input("Type a 81-char string:")
-    # while len(puzzle) != 81:
-    #     print("Invalid puzzle")
-    #     puzzle = input("Type a 81-char string: ")
-    # csp_table = sudoku_csp()
-    # variables = initial_variables(puzzle, csp_table)
-    # print("Initial:\n" + display(puzzle))
-    # solution = backtracking_search(puzzle, variables, csp_table)
-    # if solution is not None:
-    #     print("solution\n" + display(solution))
-    # else:
-    #     print("No solution found.\n")
-    #
-    # csp_table = sudoku_csp()
-    # puzzle = "52...6.........7.13...........4..8..6......5...........418.........3..2...87....."
-    # variables = initial_variables(puzzle, csp_table)
-    # assignment = initial_assignment(puzzle, variables, csp_table)
-    # solution = backtracking_search(assignment, variables, csp_table)
-    # print("WOWOWOWOWOWO LOOK\n" + display(solution))
-
-    # with open("puzzles.txt") as f:
-    #     puzzles = f.readlines()
-    # csp_table = sudoku_csp()
-    # initial_time = time.time()
-    # for num, p in enumerate(puzzles):
-    #     # if num == 26:
-    #     #     break
-    #     puzzle = p.strip()
-    #     variables = initial_variables(puzzle, csp_table)
-    #     assignment = initial_assignment(puzzle, variables, csp_table)
-    #     # print(f"Puzzle #{num+1}:\n" + display(puzzle))
-    #     solution = backtracking_search(assignment, variables, csp_table)
-    #     if solution is not None:
-    #         print(f"Solution #{num+1} completed!\n" + display(solution))
-    #     else:
-    #         print("You suck.\n")
-    # print(f"Time: {time.time() - initial_time}")
 
 
 if __name__ == '__main__': main()
