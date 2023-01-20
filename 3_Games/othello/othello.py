@@ -607,7 +607,7 @@ class Best_AI_bot:
         captured = sum(board[i[0]][i[1]] == color for i in corners)
         potential_corners = len([val for val in corners if val in possible_moves])
         unlikely_corners = 4 - captured - potential_corners
-        return 5 * captured - 2 * unlikely_corners
+        return 5 * captured + 0.5 * potential_corners - 2 * unlikely_corners
 
     def stability_heuristic(self, board, color, opposite_moves):
         unstable_coins = []
@@ -623,14 +623,17 @@ class Best_AI_bot:
                 stable_coins.append(stable)
 
         if len(stable_coins) > 0:
+            all_stable = True
             for i in self.spiral:
+                if (i-8) % 9 == 0 and not all_stable:
+                    break
                 if i not in unstable_coins:
                     if board[i // 8][i % 8] == color:
                         stable = self.is_stable(board, i, color, stable_coins)
                         if stable:
                             stable_coins.append(i)
                         else:
-                            break
+                            all_stable = False
         stable_num = len(stable_coins)
         unstable_num = len(unstable_coins)
         semi_stable_num = self.score(board, color) - stable_num - unstable_num
@@ -728,13 +731,13 @@ class Best_AI_bot:
         if stones > 50:
             self.update_weights(1, 3, 1, 0)
         elif stones > 40:
-            self.update_weights(8, 3, 6, 0)
+            self.update_weights(6, 3, 6, 0)
         elif stones > 30:
-            self.update_weights(6, 5, 10, 0)
+            self.update_weights(7, 5, 10, 0)
         elif stones > 20:
-            self.update_weights(6, 6, 11, 1)
+            self.update_weights(8, 6, 12, 1)
         elif stones > 10:
-            self.update_weights(5, 6, 11, 4)
+            self.update_weights(6, 6, 12, 2)
         else:
             self.update_weights(1, 1, 1, 15)
 
