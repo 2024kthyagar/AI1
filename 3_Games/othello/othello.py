@@ -217,7 +217,7 @@ class Best_AI_bot:
             color = "O"
         start_time = time.time()
         best_move, best_val = None, 0
-        time_for_move = 1.5  # seconds
+        time_for_move = 2.5  # seconds
         if self.stones_left(board) <= 10:
             print(f'Endgame: depth = {self.stones_left(board)}')
             search_depth = self.stones_left(board)
@@ -395,6 +395,207 @@ class Best_AI_bot:
         self.stability_weight = stability_weight
         self.corners_weight = corners_weight
         self.coin_weight = coin_weight
+
+
+    def potential_mobility(self, board, color):
+        coins_to_check = 4
+        potential = 0
+        for row in range(self.x_max):
+            if coins_to_check == 0:
+                break
+            for col in range(self.y_max):
+                if coins_to_check == 0:
+                    break
+                if board[row][col] == self.opposite_color[color]:
+                    border = []
+                    coins_to_check -= 1
+                    for v in range(row - 1, row + 1):
+                        for h in range(col - 1, col + 1):
+                            border.append((v, h))
+                    potential += sum(board[i[0]][i[1]] == '.' for i in border)
+        return potential
+
+    def next_to_danger_squares(self, board, color):
+        score = 0
+        next_to_danger_squares = [2, 10, 18, 17, 16, 40, 41, 42, 50, 58, 61, 53, 45, 46, 47, 23, 22, 21, 13, 5]
+        for i in next_to_danger_squares:
+            if board[i // 8][i % 8] == color:
+                score += 1
+
+    def corner_heuristic(self, board, color, possible_moves, corners):
+        captured = sum(board[i[0]][i[1]] == color for i in corners)
+        potential_corners = len([val for val in corners if val in possible_moves])
+        unlikely_corners = 4 - captured - potential_corners
+        return 5 * captured + 0.5 * potential_corners - 2 * unlikely_corners
+
+    def stability_heuristic(self, board, color, opposite_moves):
+        unstable_coins = []
+        for move in opposite_moves:
+            for flipped_coin in self.find_flipped(board, move[0], move[1], color):
+                if flipped_coin not in unstable_coins:
+                    unstable_coins.append(flipped_coin[0] * 8 + flipped_coin[1])
+
+        stable_coins = []
+        stables = [0, 1, 6, 7, 8, 15, 48, 55, 56, 57, 62, 63]
+        for stable in stables:
+            if board[stable // 8][stable % 8] == color:
+                stable_coins.append(stable)
+
+        if len(stable_coins) > 0:
+            all_stable = True
+            for i in self.spiral:
+                if (i-8) % 9 == 0 and not all_stable:
+                    break
+                if i not in unstable_coins:
+                    if board[i // 8][i % 8] == color:
+                        stable = self.is_stable(board, i, color, stable_coins)
+                        if stable:
+                            stable_coins.append(i)
+                        else:
+                            all_stable = False
+        stable_num = len(stable_coins)
+        unstable_num = len(unstable_coins)
+        semi_stable_num = self.score(board, color) - stable_num - unstable_num
+        return (stable_num * 10 + semi_stable_num * 3 - unstable_num * 4) / 9
+
+    def is_stable(self, board, i, color, stable_coins):
+        stable = True
+        for direction in self.stability_directions:
+            if not stable:
+                break
+            if 0 < i // 8 + direction[0] < self.x_max and 0 < i % 8 + direction[1] < self.y_max:
+                if board[i // 8 + direction[0]][i % 8 + direction[1]] == color and i + 8 * \
+                        direction[0] + direction[1] in stable_coins:
+                    continue
+            if 0 < i // 8 - direction[0] < self.x_max and 0 < i % 8 - direction[1] < self.y_max:
+                if board[i // 8 - direction[0]][i % 8 - direction[1]] == color and i - 8 * \
+                        direction[0] - direction[1] in stable_coins:
+                    continue
+            for distance in range(self.x_max):
+                x = i // 8 + distance * direction[0]
+                y = i % 8 + distance * direction[1]
+                if 0 <= x < self.x_max and 0 <= y < self.y_max:
+                    if board[x][y] == '.':
+                        stable = False
+                        break
+                else:
+                    break
+                x = i // 8 - distance * direction[0]
+                y = i % 8 - distance * direction[1]
+                if 0 <= x < self.x_max and 0 <= y < self.y_max:
+                    if board[x][y] == '.':
+                        stable = False
+                        break
+                else:
+                    break
+        return stable
+
+    def evaluate(self, board, color):
+        # returns the utility value
+        possible_moves = self.find_moves(board, color)
+        opponent_moves = self.find_moves(board, self.opposite_color[color])
+        stones = self.stones_left(board)
+        if stones == 0 or (len(possible_moves) == 0 and len(opponent_moves) == 0):
+            s = self.score(board, color)
+            o = self.score(board, self.opposite_color[color])
+            return 1000 * (s - o)
+
+        if a := (len(possible_moves) + len(opponent_moves)) != 0:
+            actual_mobility = (len(possible_moves) - len(opponent_moves)) / a
+        else:
+            actual_mobility = 0
+        #
+        # potential = self.potential_mobility(board, color)
+        # opponent_potential = self.potential_mobility(board, self.opposite_color[color])
+        # if p := (potential + opponent_potential) != 0:
+        #     potential_mobility = (potential - opponent_potential) / p
+        # else:
+        #     potential_mobility = 0
+
+        # mobility_val = (4*actual_mobility + potential_mobility)/2.5
+        mobility_val = actual_mobility*2
+
+        # mobility_val = (mobility_val+5000)/10000
+        corners = [(0, 0), (0, self.y_max - 1), (self.x_max - 1, 0),
+                   (self.x_max - 1, self.y_max - 1)]
+        my_corners = self.corner_heuristic(board, color, possible_moves, corners)
+        opponent_corners = self.corner_heuristic(board, self.opposite_color[color], opponent_moves, corners)
+        if c := (my_corners + opponent_corners) != 0:
+            corner_val = (my_corners - opponent_corners) / c
+        else:
+            corner_val = 0
+
+        # corner_val = (corner_val + 2500) / 5000
+
+        stability = self.stability_heuristic(board, color, opponent_moves)
+        opponent_stability = self.stability_heuristic(board, self.opposite_color[color], possible_moves)
+        if s := (stability + opponent_stability) != 0:
+            stability_val = (stability - opponent_stability) / s
+        else:
+            stability_val = 0
+
+        # stability_val = (stability_val + 50000) / 100000
+
+        coins = self.score(board, color)
+        opponent_coins = self.score(board, self.opposite_color[color])
+        coin_val = (coins - opponent_coins) / (coins + opponent_coins)
+
+        self.min_mobility = min(self.min_mobility, mobility_val)
+        self.max_mobility = max(self.max_mobility, mobility_val)
+        self.min_corners = min(self.min_corners, corner_val)
+        self.max_corners = max(self.max_corners, corner_val)
+        self.min_stability = min(self.min_stability, stability_val)
+        self.max_stability = max(self.max_stability, stability_val)
+
+        if stones > 50:
+            self.update_weights(3, 1, 6, 0)
+        elif stones > 40:
+            self.update_weights(6, 3, 9, 0)
+        elif stones > 30:
+            self.update_weights(7, 5, 10, 0)
+        elif stones > 20:
+            self.update_weights(8, 6, 12, 1)
+        elif stones > 10:
+            self.update_weights(6, 6, 12, 2)
+        else:
+            self.update_weights(1, 1, 7, 15)
+
+        return self.corners_weight * corner_val + self.mobility_weight * mobility_val + self.stability_weight * stability_val + self.coin_weight * coin_val
+
+    def score(self, board, color):
+        return sum(row.count(color) for row in board)
+
+    def find_moves(self, board, color):
+        moves_found = {}
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                flipped_stones = self.find_flipped(board, i, j, color)
+                if len(flipped_stones) > 0:
+                    moves_found.update({(i, j): flipped_stones})
+        return moves_found
+
+    def find_flipped(self, board, x, y, color):
+        if board[x][y] != ".":
+            return []
+        if color == self.black:
+            color = "@"
+        else:
+            color = "O"
+        flipped_stones = []
+        for incr in self.directions:
+            temp_flip = []
+            x_pos = x + incr[0]
+            y_pos = y + incr[1]
+            while 0 <= x_pos < self.x_max and 0 <= y_pos < self.y_max:
+                if board[x_pos][y_pos] == ".":
+                    break
+                if board[x_pos][y_pos] == color:
+                    flipped_stones += temp_flip
+                    break
+                temp_flip.append((x_pos, y_pos))
+                x_pos += incr[0]
+                y_pos += incr[1]
+        return flipped_stones
 
     def conv1(self, board, color):
         square1 = [0, 1, 2, 8, 9, 10, 16, 17, 18]
@@ -577,206 +778,6 @@ class Best_AI_bot:
         for i in range(13):
             score += self.conv_weights[i] * self.conv_functions[i](board, color)
         return score
-
-    def potential_mobility(self, board, color):
-        coins_to_check = 4
-        potential = 0
-        for row in range(self.x_max):
-            if coins_to_check == 0:
-                break
-            for col in range(self.y_max):
-                if coins_to_check == 0:
-                    break
-                if board[row][col] == self.opposite_color[color]:
-                    border = []
-                    coins_to_check -= 1
-                    for v in range(row - 1, row + 1):
-                        for h in range(col - 1, col + 1):
-                            border.append((v, h))
-                    potential += sum(board[i[0]][i[1]] == '.' for i in border)
-        return potential
-
-    def next_to_danger_squares(self, board, color):
-        score = 0
-        next_to_danger_squares = [2, 10, 18, 17, 16, 40, 41, 42, 50, 58, 61, 53, 45, 46, 47, 23, 22, 21, 13, 5]
-        for i in next_to_danger_squares:
-            if board[i // 8][i % 8] == color:
-                score += 1
-
-    def corner_heuristic(self, board, color, possible_moves, corners):
-        captured = sum(board[i[0]][i[1]] == color for i in corners)
-        potential_corners = len([val for val in corners if val in possible_moves])
-        unlikely_corners = 4 - captured - potential_corners
-        return 5 * captured + 0.5 * potential_corners - 2 * unlikely_corners
-
-    def stability_heuristic(self, board, color, opposite_moves):
-        unstable_coins = []
-        for move in opposite_moves:
-            for flipped_coin in self.find_flipped(board, move[0], move[1], color):
-                if flipped_coin not in unstable_coins:
-                    unstable_coins.append(flipped_coin[0] * 8 + flipped_coin[1])
-
-        stable_coins = []
-        stables = [0, 1, 6, 7, 8, 15, 48, 55, 56, 57, 62, 63]
-        for stable in stables:
-            if board[stable // 8][stable % 8] == color:
-                stable_coins.append(stable)
-
-        if len(stable_coins) > 0:
-            all_stable = True
-            for i in self.spiral:
-                if (i-8) % 9 == 0 and not all_stable:
-                    break
-                if i not in unstable_coins:
-                    if board[i // 8][i % 8] == color:
-                        stable = self.is_stable(board, i, color, stable_coins)
-                        if stable:
-                            stable_coins.append(i)
-                        else:
-                            all_stable = False
-        stable_num = len(stable_coins)
-        unstable_num = len(unstable_coins)
-        semi_stable_num = self.score(board, color) - stable_num - unstable_num
-        return (stable_num * 10 + semi_stable_num * 3 - unstable_num * 4) / 9
-
-    def is_stable(self, board, i, color, stable_coins):
-        stable = True
-        for direction in self.stability_directions:
-            if not stable:
-                break
-            if 0 < i // 8 + direction[0] < self.x_max and 0 < i % 8 + direction[1] < self.y_max:
-                if board[i // 8 + direction[0]][i % 8 + direction[1]] == color and i + 8 * \
-                        direction[0] + direction[1] in stable_coins:
-                    continue
-            if 0 < i // 8 - direction[0] < self.x_max and 0 < i % 8 - direction[1] < self.y_max:
-                if board[i // 8 - direction[0]][i % 8 - direction[1]] == color and i - 8 * \
-                        direction[0] - direction[1] in stable_coins:
-                    continue
-            for distance in range(self.x_max):
-                x = i // 8 + distance * direction[0]
-                y = i % 8 + distance * direction[1]
-                if 0 <= x < self.x_max and 0 <= y < self.y_max:
-                    if board[x][y] == '.':
-                        stable = False
-                        break
-                else:
-                    break
-                x = i // 8 - distance * direction[0]
-                y = i % 8 - distance * direction[1]
-                if 0 <= x < self.x_max and 0 <= y < self.y_max:
-                    if board[x][y] == '.':
-                        stable = False
-                        break
-                else:
-                    break
-        return stable
-
-    def evaluate(self, board, color):
-        # returns the utility value
-        possible_moves = self.find_moves(board, color)
-        opponent_moves = self.find_moves(board, self.opposite_color[color])
-        stones = self.stones_left(board)
-        if stones == 0 or (len(possible_moves) == 0 and len(opponent_moves) == 0):
-            s = self.score(board, color)
-            o = self.score(board, self.opposite_color[color])
-            return 1000 * (s - o)
-
-        if a := (len(possible_moves) + len(opponent_moves)) != 0:
-            actual_mobility = (len(possible_moves) - len(opponent_moves)) / a
-        else:
-            actual_mobility = 0
-        #
-        # potential = self.potential_mobility(board, color)
-        # opponent_potential = self.potential_mobility(board, self.opposite_color[color])
-        # if p := (potential + opponent_potential) != 0:
-        #     potential_mobility = (potential - opponent_potential) / p
-        # else:
-        #     potential_mobility = 0
-
-        # mobility_val = (4*actual_mobility + potential_mobility)/2.5
-        mobility_val = actual_mobility*2
-
-        # mobility_val = (mobility_val+5000)/10000
-        corners = [(0, 0), (0, self.y_max - 1), (self.x_max - 1, 0),
-                   (self.x_max - 1, self.y_max - 1)]
-        my_corners = self.corner_heuristic(board, color, possible_moves, corners)
-        opponent_corners = self.corner_heuristic(board, self.opposite_color[color], opponent_moves, corners)
-        if c := (my_corners + opponent_corners) != 0:
-            corner_val = (my_corners - opponent_corners) / c
-        else:
-            corner_val = 0
-
-        # corner_val = (corner_val + 2500) / 5000
-
-        stability = self.stability_heuristic(board, color, opponent_moves)
-        opponent_stability = self.stability_heuristic(board, self.opposite_color[color], possible_moves)
-        if s := (stability + opponent_stability) != 0:
-            stability_val = (stability - opponent_stability) / s
-        else:
-            stability_val = 0
-
-        # stability_val = (stability_val + 50000) / 100000
-
-        coins = self.score(board, color)
-        opponent_coins = self.score(board, self.opposite_color[color])
-        coin_val = (coins - opponent_coins) / (coins + opponent_coins)
-
-        self.min_mobility = min(self.min_mobility, mobility_val)
-        self.max_mobility = max(self.max_mobility, mobility_val)
-        self.min_corners = min(self.min_corners, corner_val)
-        self.max_corners = max(self.max_corners, corner_val)
-        self.min_stability = min(self.min_stability, stability_val)
-        self.max_stability = max(self.max_stability, stability_val)
-
-        if stones > 50:
-            self.update_weights(1, 3, 1, 0)
-        elif stones > 40:
-            self.update_weights(6, 3, 6, 0)
-        elif stones > 30:
-            self.update_weights(7, 5, 10, 0)
-        elif stones > 20:
-            self.update_weights(8, 6, 12, 1)
-        elif stones > 10:
-            self.update_weights(6, 6, 12, 2)
-        else:
-            self.update_weights(1, 1, 1, 15)
-
-        return self.corners_weight * corner_val + self.mobility_weight * mobility_val + self.stability_weight * stability_val + self.coin_weight * coin_val
-
-    def score(self, board, color):
-        return sum(row.count(color) for row in board)
-
-    def find_moves(self, board, color):
-        moves_found = {}
-        for i in range(len(board)):
-            for j in range(len(board[i])):
-                flipped_stones = self.find_flipped(board, i, j, color)
-                if len(flipped_stones) > 0:
-                    moves_found.update({(i, j): flipped_stones})
-        return moves_found
-
-    def find_flipped(self, board, x, y, color):
-        if board[x][y] != ".":
-            return []
-        if color == self.black:
-            color = "@"
-        else:
-            color = "O"
-        flipped_stones = []
-        for incr in self.directions:
-            temp_flip = []
-            x_pos = x + incr[0]
-            y_pos = y + incr[1]
-            while 0 <= x_pos < self.x_max and 0 <= y_pos < self.y_max:
-                if board[x_pos][y_pos] == ".":
-                    break
-                if board[x_pos][y_pos] == color:
-                    flipped_stones += temp_flip
-                    break
-                temp_flip.append((x_pos, y_pos))
-                x_pos += incr[0]
-                y_pos += incr[1]
-        return flipped_stones
 
 
 class Worst_AI_bot:
