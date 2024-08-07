@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/purple_200"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photo_layout"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias=".2">
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/photo_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/arrow_layout">
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/arrow_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:gravity="center_horizontal"
+        />
+    <TextView
+        android:id="@+id/maintext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/photo_layout"
+        android:gravity="center_horizontal"
+        android:text="@string/represent"
+        app:layout_constraintVertical_bias=".1"/>
+
+
+    <EditText
+        android:id="@+id/name_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/maintext"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:hint="@string/name_input"
+        android:inputType="text"
+        />
+    <Button
+        android:id="@+id/name_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/name_input"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/put_name"
+        />
+    <Button
+        android:id="@+id/change_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/name_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/name_insert"
+        />
+
+
+
+    <RadioButton
+        android:id="@+id/radio_zebra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/zebra"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_water_buffalo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/water_buffalo"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_giraffe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/giraffe"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_meerkat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/meerkat"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_chimp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chimpanzee"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_rhino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rhino"
+        tools:ignore="MissingConstraints"/>
+
+    <RadioButton
+        android:id="@+id/radio_gazelle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gazelle"
+        tools:ignore="MissingConstraints" />
+
+    <RadioButton
+        android:id="@+id/radio_armadillo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/armadillo"
+        tools:ignore="MissingConstraints" />
+
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        app:constraint_referenced_ids="radio_zebra, radio_water_buffalo, radio_giraffe, radio_meerkat, radio_chimp, radio_rhino, radio_gazelle, radio_armadillo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/change_button"
+        app:flow_horizontalGap="10dp"
+        app:flow_horizontalStyle="packed"
+        app:flow_verticalStyle="packed"
+        app:flow_verticalBias="0"
+        app:flow_wrapMode="chain"
+        app:layout_constraintVertical_bias=".1"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

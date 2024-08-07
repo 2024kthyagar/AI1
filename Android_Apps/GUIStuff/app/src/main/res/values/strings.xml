@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">GUI Stuff</string>
+    <string name="no_love">Hello<u>%1s</u>, do you love your <u>%2s</u>?</string>
+    <string name="name_insert">Change the animal!</string>
+    <string name="down_radio">Down</string>
+    <string name="up_radio">Up</string>
+    <string name="input_string">Input your name:</string>
+    <string name="name_input">Enter your name:</string>
+    <string name="put_name">Input your name!</string>
+    <string name="zebra">Zebra</string>
+    <string name="water_buffalo">Water Buffalo</string>
+    <string name="represent">Which animal represents you best?</string>
+    <string name="giraffe">Giraffe</string>
+    <string name="meerkat">Meerkat</string>
+    <string name="chimpanzee">Chimpanzee</string>
+    <string name="rhino">Rhino</string>
+    <string name="gazelle">Gazelle</string>
+    <string name="armadillo">Armadillo</string>
+    <string-array name="universe">
+        <item>World</item>
+        <item>House</item>
+        <item>School</item>
+        <item>Homework</item>
+    </string-array>
+</resources>

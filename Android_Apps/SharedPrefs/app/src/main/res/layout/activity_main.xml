@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:id="@+id/layout">
+
+    <TextView
+        android:id="@+id/topleft_textview"
+        android:layout_width="@dimen/view_length"
+        android:layout_height="@dimen/view_length"
+        android:text="@string/top_left"
+        android:tag="topLeft"
+        android:gravity="center"
+        android:textSize="@dimen/textsize"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/topright_textview"
+        android:layout_width="@dimen/view_length"
+        android:layout_height="@dimen/view_length"
+        android:text="@string/top_right"
+        android:tag="topRight"
+        android:gravity="center"
+        android:textSize="@dimen/textsize"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/botright_button"
+        android:layout_width="@dimen/view_length"
+        android:layout_height="@dimen/view_length"
+        android:text="@string/bottom_right"
+        android:tag="botRight"
+        android:gravity="center"
+        android:textSize="@dimen/textsize"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/botleft_button"
+        android:layout_width="@dimen/view_length"
+        android:layout_height="@dimen/view_length"
+        android:text="@string/bottom_left"
+        android:tag="botLeft"
+        android:gravity="center"
+        android:textSize="@dimen/textsize"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:min="5"
+        android:max="100"
+        android:progressTint="@color/teal_200"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5"
+        />
+
+    <TextView
+        android:id="@+id/running_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Since Running:"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/vertical_guideline"
+        app:layout_constraintVertical_bias=".3"
+        android:textSize="20sp"
+        />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/running_list_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintRight_toLeftOf="@id/running_list"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/running_list"
+        app:layout_constraintLeft_toLeftOf="@id/running_list_guide"
+        >
+        <TextView
+            android:id="@+id/restart_create"
+            android:tag="restart_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_start"
+            android:tag="restart_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_resume"
+            android:tag="restart_resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_pause"
+            android:tag="restart_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_stop"
+            android:tag="restart_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_restart"
+            android:tag="restart_restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/restart_destroy"
+            android:tag="restart_destroy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/install_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Since Installation:"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/vertical_guideline"
+        app:layout_constraintVertical_bias=".3"
+        android:textSize="20sp"
+        />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/install_list_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintRight_toLeftOf="@+id/install_list"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/install_list"
+        app:layout_constraintLeft_toLeftOf="@id/install_list_guide"
+        >
+        <TextView
+            android:id="@+id/install_create"
+            android:tag="install_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_start"
+            android:tag="install_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_resume"
+            android:tag="install_resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_pause"
+            android:tag="install_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_stop"
+            android:tag="install_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_restart"
+            android:tag="install_restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+        <TextView
+            android:id="@+id/install_destroy"
+            android:tag="install_destroy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

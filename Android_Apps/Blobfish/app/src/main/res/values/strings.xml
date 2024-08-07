@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Blobfish</string>
+    <string name="enter_desired_bpm">Enter desired bpm:</string>
+    <string name="start_metronome">Start Meteronome</string>
+    <string name="pause_metronome">Pause Metronome</string>
+    <string name="close_app">Close app</string>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Lifecycle</string>
+    <string-array name="format_strings">
+        <item>onCreate: %1s</item>
+        <item>onStart: %1s</item>
+        <item>onResume: %1s</item>
+        <item>onPause: %1s</item>
+        <item>onStop: %1s</item>
+        <item>onRestart: %1s</item>
+        <item>onDestroy: %1s</item>
+    </string-array>
+</resources>
